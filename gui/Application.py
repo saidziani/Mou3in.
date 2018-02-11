@@ -1,11 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import PosWorkSpace
+import SumWorkSpace
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.setFixedSize(800, 500)
-        Form.setGeometry(300, 150, 800, 500)
+        Form.setFixedSize(1100, 650)
+        Form.setGeometry(140, 80, 800, 500)
         font = QtGui.QFont()
         font.setFamily("Lato")
         Form.setFont(font)
@@ -47,7 +47,7 @@ class Ui_Form(object):
         self.label_4.setPixmap(pixmap)
         self.label_4.setGeometry(QtCore.QRect(313, 100, 220, 200))
 
-        self.label.mousePressEvent = self.openPos
+        self.label.mousePressEvent = self.openSum
         # self.label_2.mousePressEvent = self.openSum
 
         self.label_3.setStyleSheet("font-weight:100")
@@ -71,15 +71,15 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Mou3ini."))
-        self.label.setText(_translate("Form", "POS Tagging"))
-        self.label_2.setText(_translate("Form", "Summarizaion"))
+        self.label.setText(_translate("Form", "Summarizaion"))
+        self.label_2.setText(_translate("Form", "POS Tagging"))
         self.label_3.setText(_translate("Form", " |"))
         self.label_5.setText(_translate("Form", ""))
 
 
-    def openPos(self, event):
+    def openSum(self, event):
         self.window = QtWidgets.QMainWindow()
-        self.ui = PosWorkSpace.PosWorkSpace()
+        self.ui = SumWorkSpace.SumWorkSpace()
         self.ui.setupUi(self.window)
         self.window.show()
 
