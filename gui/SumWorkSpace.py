@@ -1,7 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import functools
+import PreProcess
 
-files = ""
+files, repertory = "", ""
 
 class SumWorkSpace(object):
     def setupUi(self, Form):
@@ -61,11 +62,10 @@ class SumWorkSpace(object):
         self.listWidget.setObjectName("listWidget")
         self.listWidget.setStyleSheet("background-color:#f7f7f7;font-size:22px;font-weight:500;")
 
-        self.pushButton_open = QtWidgets.QPushButton(Form) 
-        self.pushButton_open.setObjectName("pushButton_open")
-        self.pushButton_open.setGeometry(QtCore.QRect(800, 575, 100, 30))
-        self.pushButton_open.setStyleSheet("background-color: #0C2444;color:#fff;font-size:14px;")
-
+        self.pushButton_choose = QtWidgets.QPushButton(Form) 
+        self.pushButton_choose.setObjectName("pushButton_choose")
+        self.pushButton_choose.setGeometry(QtCore.QRect(800, 575, 100, 30))
+        self.pushButton_choose.setStyleSheet("background-color: #0C2444;color:#fff;font-size:14px;")
 
         self.labelTextEdit = QtWidgets.QLabel(Form)
         self.labelTextEdit.setGeometry(QtCore.QRect(50, 200, 150, 30))
@@ -103,7 +103,7 @@ class SumWorkSpace(object):
         self.label.setText(_translate("Form", ""))
         self.label_2.setText(_translate("Form", ""))
         self.label_3.setText(_translate("Form", "Veuillez choisir un repertoire ou un fichier"))
-        self.labelRest.setText(_translate("Form", "5/12"))
+        self.labelRest.setText(_translate("Form", "0/0"))
         self.labelTextEdit.setText(_translate("Form", "Phrase à traiter"))
         self.labelList.setText(_translate("Form", "Ensemble des fichiers"))
 
@@ -111,7 +111,7 @@ class SumWorkSpace(object):
         self.pushButton_keep.setText(_translate("Form", "Keep"))
         self.pushButton_remove.setText(_translate("Form", "Remove"))
         self.pushButton_save.setText(_translate("Form", "Save"))
-        self.pushButton_open.setText(_translate("Form", "Select"))
+        self.pushButton_choose.setText(_translate("Form", "Select"))
 
 
         
@@ -121,20 +121,28 @@ class SumWorkSpace(object):
 
     def getFiles(self):
         global files
+        global repertory  
         files = QtWidgets.QFileDialog.getOpenFileNames()
+        repertory = "/".join(str(files[0][0]).split('/')[:-1])
         self.files = files[0]
-        print(self.files[0])
         for file in self.files:
             file = str(file).split('/')[-1]
             self.listWidget.addItem(file)
-        # self.listWidget.itemClicked.connect(self.addSelectItem)
+        self.listWidget.itemClicked.connect(self.chooseFile)
 
-        
-    # def openFile(self, item):
-    #     import os
-    #     file = files+"/"+item.text()
-    #     os.system("subl "+file)
+    def chooseFile(self, item):
+        preProcess = PreProcess.PreProcess()
+        content = preProcess.getArticleContent(repertory+"/"+item.text())
+        sents = preProcess.getSents(content)
+        self.labelRest.setText('0/'+str(len(sents)))
+        self.processing(sents)
 
+
+    def processing(self, sents):
+        for sent in sents:
+            
+        self.textEdit.setText(sents[0])
+        print(sents[0])
 
 if __name__ == "__main__":
     import sys
