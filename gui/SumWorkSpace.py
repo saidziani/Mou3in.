@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import functools
 import PreProcess
 
-files, repertory = "", ""
+files, repertory, phrases = "", "", []
 
 class SumWorkSpace(object):
     def setupUi(self, Form):
@@ -61,6 +61,7 @@ class SumWorkSpace(object):
         self.listWidget.setGeometry(QtCore.QRect(800, 260, 250, 300))
         self.listWidget.setObjectName("listWidget")
         self.listWidget.setStyleSheet("background-color:#f7f7f7;font-size:22px;font-weight:500;")
+        self.listWidget.itemClicked.connect(self.chooseFile)
 
         self.pushButton_choose = QtWidgets.QPushButton(Form) 
         self.pushButton_choose.setObjectName("pushButton_choose")
@@ -79,6 +80,7 @@ class SumWorkSpace(object):
         self.pushButton_keep.setObjectName("pushButton_keep")
         self.pushButton_keep.setGeometry(QtCore.QRect(600, 500, 100, 30))
         self.pushButton_keep.setStyleSheet("background-color: #0C2444;color:#fff;font-size:14px;")
+        self.pushButton_keep.clicked.connect(self.processing)
 
         self.pushButton_remove = QtWidgets.QPushButton(Form) 
         self.pushButton_remove.setObjectName("pushButton_remove")
@@ -113,9 +115,6 @@ class SumWorkSpace(object):
         self.pushButton_save.setText(_translate("Form", "Save"))
         self.pushButton_choose.setText(_translate("Form", "Select"))
 
-
-        
-
     def retour(self, event):
         self.closeWindow()
 
@@ -128,21 +127,33 @@ class SumWorkSpace(object):
         for file in self.files:
             file = str(file).split('/')[-1]
             self.listWidget.addItem(file)
-        self.listWidget.itemClicked.connect(self.chooseFile)
 
     def chooseFile(self, item):
         preProcess = PreProcess.PreProcess()
         content = preProcess.getArticleContent(repertory+"/"+item.text())
-        sents = preProcess.getSents(content)
-        self.labelRest.setText('0/'+str(len(sents)))
-        self.processing(sents)
+        self.sents = preProcess.getSents(content)
+        self.labelRest.setText('0/'+str(len(self.sents)))
+        self.textEdit.setText(self.sents[0])
+
+    def processing(self):
+        for sent in self.sents[1:]:
+            # self.textEdit.clear()
+            print(sent)
+            # self.textEdit.setText(sent)
+            # self.pushButton_keep.mousePressEvent = functools.partial(self.sent2keep, source_object=sent)
 
 
-    def processing(self, sents):
-        for sent in sents:
-            
-        self.textEdit.setText(sents[0])
-        print(sents[0])
+
+        # print(sents[0])
+
+    def sent2keep(self, event, source_object=None):
+        print('KEEP', source_object)
+
+
+
+
+
+
 
 if __name__ == "__main__":
     import sys
