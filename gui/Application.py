@@ -9,43 +9,42 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setFamily("Lato")
         Form.setFont(font)
-        Form.setStyleSheet("background-color: #fff;\n"
-"color: #0C2444;")
+        Form.setStyleSheet("background-color: #fff;color: #1ead8a;")
         Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.hideWindow = Form.hide
 
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(200, 330, 150, 51))
+        self.label.setGeometry(QtCore.QRect(250, 400, 230, 51))
         font = QtGui.QFont()
         font.setFamily("Lato")
-        font.setPointSize(15)
+        font.setPointSize(25)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(Form)
-        self.label_2.setGeometry(QtCore.QRect(450, 330, 150, 51))
+        self.label_2.setGeometry(QtCore.QRect(640, 400, 230, 51))
         font = QtGui.QFont()
         font.setFamily("Lato")
-        font.setPointSize(15)
+        font.setPointSize(25)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
 
         self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setGeometry(QtCore.QRect(380, 330, 21, 51))
+        self.label_3.setGeometry(QtCore.QRect(550, 400, 21, 51))
 
         self.label_3.setObjectName("label_3")
 
         font = QtGui.QFont()
         font.setFamily("Lato")
-        font.setPointSize(32)
+        font.setPointSize(25)
         font.setBold(True)
         font.setWeight(75)
         
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setText("")
         self.label_4.setObjectName("label_4")
-        pixmap = QtGui.QPixmap('se.png').scaledToWidth(155)
+        pixmap = QtGui.QPixmap('mou3in-logo.png').scaledToWidth(200)
         self.label_4.setPixmap(pixmap)
-        self.label_4.setGeometry(QtCore.QRect(313, 100, 220, 200))
+        self.label_4.setGeometry(QtCore.QRect(450, 100, 220, 200))
 
         self.label.mousePressEvent = self.openSum
         # self.label_2.mousePressEvent = self.openSum
@@ -71,7 +70,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Mou3ini."))
-        self.label.setText(_translate("Form", "Summarizaion"))
+        self.label.setText(_translate("Form", "Summarization"))
         self.label_2.setText(_translate("Form", "POS Tagging"))
         self.label_3.setText(_translate("Form", " |"))
         self.label_5.setText(_translate("Form", ""))
