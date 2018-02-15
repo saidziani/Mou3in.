@@ -32,8 +32,9 @@ class PreProcess():
             pickle.dump(itemList, fp)
 
     def getSents(self, content):
-        return content.split('.')
-
+        sents = content.split('.')
+        sents = [sent for sent in sents if sent != ""]
+        return sents
 
 
 
