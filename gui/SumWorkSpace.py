@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import functools
+import functools, os
 import PreProcess
+from bs4 import BeautifulSoup
 
 files, repertory = "", ""
 index = 0
@@ -15,7 +16,7 @@ class SumWorkSpace(object):
         Form.setFont(font)
         Form.setStyleSheet("background-color: #f7f7f7;color: #1ead8a;")
         self.closeWindow = Form.close
-        self.newSent, self.itemIndex = [], -1
+        self.newSent, self.itemIndex, self.method = [], -1, 1
 
         Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
@@ -42,16 +43,17 @@ class SumWorkSpace(object):
         self.label.mousePressEvent = self.retour
 
         self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setGeometry(QtCore.QRect(260, 120, 520, 30))
+        self.label_3.setGeometry(QtCore.QRect(650, 120, 200, 30))
         self.label_3.setObjectName("label_3")
-        self.label_3.setStyleSheet("background-color: #fff;border: 1px solid #1c1c1c;color:#1c1c1c")
+        self.label_3.setStyleSheet("color:#1c1c1c")
 
         self.pushButton_2 = QtWidgets.QPushButton(Form) 
         self.pushButton_2.setEnabled(True)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.setGeometry(QtCore.QRect(770, 120, 60, 30))
+        self.pushButton_2.setGeometry(QtCore.QRect(850, 125, 60, 25))
         self.pushButton_2.setStyleSheet("background-color: #1c1c1c;color:#fff;font-size:14px;")
         self.pushButton_2.clicked.connect(self.getFiles)
+        self.pushButton_2.setDisabled(True)
 
         self.labelList = QtWidgets.QLabel(Form)
         self.labelList.setGeometry(QtCore.QRect(760, 220, 250, 30))
@@ -83,13 +85,13 @@ class SumWorkSpace(object):
         self.pushButton_keep = QtWidgets.QPushButton(Form) 
         self.pushButton_keep.setObjectName("pushButton_keep")
         self.pushButton_keep.setGeometry(QtCore.QRect(600, 530, 100, 30))
-        self.pushButton_keep.setStyleSheet("background-color: #1c1c1c;color:#fff;font-size:14px;")
+        self.pushButton_keep.setStyleSheet("background-color: green;color:#fff;font-size:14px;")
         self.pushButton_keep.mousePressEvent = functools.partial(self.processing, source_object=self.pushButton_keep)
 
         self.pushButton_remove = QtWidgets.QPushButton(Form) 
         self.pushButton_remove.setObjectName("pushButton_remove")
         self.pushButton_remove.setGeometry(QtCore.QRect(480, 530, 100, 30))
-        self.pushButton_remove.setStyleSheet("background-color: #1c1c1c;color:#fff;font-size:14px;")
+        self.pushButton_remove.setStyleSheet("background-color: red;color:#fff;font-size:14px;")
         self.pushButton_remove.mousePressEvent = functools.partial(self.processing, source_object=self.pushButton_remove)
 
         self.labelRest = QtWidgets.QLabel(Form)
@@ -102,7 +104,35 @@ class SumWorkSpace(object):
         self.pushButton_save.setGeometry(QtCore.QRect(50, 530, 100, 30))
         self.pushButton_save.setStyleSheet("background-color: #1c1c1c;color:#fff;font-size:14px;")
         self.pushButton_save.clicked.connect(self.save)
-        self.pushButton_save.setDisabled(True) 
+        self.pushButton_save.setDisabled(True)
+
+        self.pushButton_skip = QtWidgets.QPushButton(Form) 
+        self.pushButton_skip.setObjectName("pushButton_skip")
+        self.pushButton_skip.setGeometry(QtCore.QRect(600, 530, 100, 30))
+        self.pushButton_skip.setStyleSheet("background-color: blue;color:#fff;font-size:14px;")
+        self.pushButton_skip.mousePressEvent = functools.partial(self.processing, source_object=self.pushButton_skip)
+        self.pushButton_skip.setVisible(False)
+
+
+        self.label_4 = QtWidgets.QLabel(Form)
+        self.label_4.setGeometry(QtCore.QRect(150, 120, 150, 30))
+        self.label_4.setObjectName("label_4")
+        self.label_4.setStyleSheet("color:#1c1c1c")
+
+        self.radioButton = QtWidgets.QRadioButton(Form)
+        self.radioButton.setGeometry(QtCore.QRect(300, 120, 100, 30))
+        self.radioButton.setObjectName("radioButton")
+        self.radioButton.setText('Classic')
+        self.radioButton.clicked.connect(self.enable)
+        self.radioButton_2 = QtWidgets.QRadioButton(Form)
+        self.radioButton_2.setGeometry(QtCore.QRect(400, 120, 100, 30))
+        self.radioButton_2.setObjectName("radioButton_2")
+        self.radioButton_2.setText('XML')
+        self.radioButton_2.clicked.connect(self.enable)
+
+        self.pushButton_save.setDisabled(True)
+        self.pushButton_choose.setDisabled(True)
+
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -113,12 +143,14 @@ class SumWorkSpace(object):
         self.label.setText(_translate("Form", ""))
         self.label_2.setText(_translate("Form", ""))
         self.label_3.setText(_translate("Form", "Choose files or directory."))
+        self.label_4.setText(_translate("Form", "Choose file format."))
         self.labelRest.setText(_translate("Form", "0/0"))
         self.labelTextEdit.setText(_translate("Form", "Sentence"))
         self.labelList.setText(_translate("Form", "Files"))
         self.pushButton_2.setText(_translate("Form", "..."))
         self.pushButton_keep.setText(_translate("Form", "Keep"))
         self.pushButton_remove.setText(_translate("Form", "Remove"))
+        self.pushButton_skip.setText(_translate("Form", "Skip"))
         self.pushButton_save.setText(_translate("Form", "Save"))
         self.pushButton_choose.setText(_translate("Form", "Select"))
 
@@ -127,15 +159,31 @@ class SumWorkSpace(object):
         self.closeWindow()
 
 
+    def enable(self):
+        self.pushButton_2.setDisabled(False)
+
     def getFiles(self):
         global files
-        global repertory  
-        files = QtWidgets.QFileDialog.getOpenFileNames()
-        repertory = "/".join(str(files[0][0]).split('/')[:-1])
-        self.files = files[0]
-        for file in self.files:
-            file = str(file).split('/')[-1]
-            self.listWidget.addItem(file)
+        global repertory
+
+        self.pushButton_choose.setDisabled(False)
+
+        filter = ""
+        if self.radioButton.isChecked():
+            filter = ""
+            self.method = 1
+        if self.radioButton_2.isChecked():
+            filter = "XML (*.xml)"
+            self.method = 2
+
+        files = QtWidgets.QFileDialog.getOpenFileNames(None, "Choose your files", "", filter)
+
+        if len(files[0]) > 0:
+            repertory = "/".join(str(files[0][0]).split('/')[:-1])
+            self.files = files[0]
+            for file in self.files:
+                file = str(file).split('/')[-1]
+                self.listWidget.addItem(file)
 
 
     def chooseFile(self, item):
@@ -144,51 +192,101 @@ class SumWorkSpace(object):
                 self.itemIndex = index
         preProcess = PreProcess.PreProcess()
         content = preProcess.getArticleContent(repertory+"/"+item.text())
-        self.sents = preProcess.getSents(content)
-        self.labelRest.setText('0/'+str(len(self.sents)))
+        if self.method == 1:
+            self.sents = preProcess.getSents(content)
+            size = len(self.sents)
+        else:
+            size, self.sents = preProcess.getXMLsents(content)
+
+        self.labelRest.setText('0/'+str(size))
         self.file = item.text()
         self.newSent = []
         self.pushButton_save.setDisabled(True) 
-        self.pushButton_keep.setDisabled(False) 
-        self.pushButton_remove.setDisabled(False)
-
+        
 
     def processing(self, event, source_object=None):
+        self.pushButton_choose.setDisabled(True)
+        self.pushButton_keep.setVisible(True) 
+        self.pushButton_remove.setVisible(True)
+        self.listWidget.setDisabled(True)
         global index
+        preProcess = PreProcess.PreProcess()
         if source_object.objectName() == "pushButton_choose":
             index = 0
             self.textEdit.clear()
-            sent = self.sents[index]
+            if self.method == 1:
+                sent = self.sents[index]
+            else:
+                sent = preProcess.getXMLtext(self.sents[index][0])
+                if self.sents[index][1] == 0:
+                    self.pushButton_skip.setVisible(True)
+                    self.pushButton_keep.setVisible(False) 
+                    self.pushButton_remove.setVisible(False)
+                else:
+                    self.pushButton_skip.setVisible(False)
+                    self.pushButton_keep.setVisible(True) 
+                    self.pushButton_remove.setVisible(True)
             self.textEdit.setText(sent)
         else:
-            sent = self.sents[index]
+            sent = ""
+            if self.method == 1:
+                sent = self.sents[index]
+            else:
+                sent = preProcess.getXMLtext(self.sents[index][0])
+                if self.sents[index][1] == 0:
+                    self.pushButton_skip.setVisible(True)
+                    self.pushButton_keep.setVisible(False) 
+                    self.pushButton_remove.setVisible(False)
+                else:
+                    self.pushButton_skip.setVisible(False)
+                    self.pushButton_keep.setVisible(True) 
+                    self.pushButton_remove.setVisible(True)
             self.textEdit.setText(sent)
             self.labelRest.setText(str(index+1)+'/'+str(len(self.sents))) 
             if source_object.objectName() == "pushButton_keep":
-                self.newSent.append("<source operation='S'>﻿"+sent+"</source>")
+                self.newSent.append("<source id='"+str(index+1)+"' operation='S'>﻿\n"+sent+"\n</source>")
             elif source_object.objectName() == "pushButton_remove":
-                self.newSent.append("<source operation='R'>﻿"+sent+"</source>")
+                self.newSent.append("<source id='"+str(index+1)+"' operation='R'>\n﻿"+sent+"\n</source>")
+            elif source_object.objectName() == "pushButton_skip":
+                self.newSent.append(str(self.sents[index][0]))
             index += 1
             if index < len(self.sents):
-                sent = self.sents[index]
+                if self.method == 1:
+                    sent = self.sents[index]
+                else:
+                    sent = preProcess.getXMLtext(self.sents[index][0])
+                    if self.sents[index][1] == 0:
+                        self.pushButton_skip.setVisible(True)
+                        self.pushButton_keep.setVisible(False) 
+                        self.pushButton_remove.setVisible(False)
+                    else:
+                        self.pushButton_skip.setVisible(False)
+                        self.pushButton_keep.setVisible(True) 
+                        self.pushButton_remove.setVisible(True)
                 self.textEdit.setText(sent)
             if index >= len(self.sents):
                 self.pushButton_save.setDisabled(False)    
-                self.pushButton_keep.setDisabled(True) 
-                self.pushButton_remove.setDisabled(True) 
+                self.pushButton_keep.setVisible(False) 
+                self.pushButton_remove.setVisible(False) 
+                self.pushButton_skip.setVisible(False)
+
             
 
     def save(self):
         withoutExt = ".".join(self.file.split('.')[:-1])
-        fileName = repertory+"/prep_"+withoutExt+".xml"
+        fileName = repertory+"/_preprop/prep_"+withoutExt+".xml"
+        if not os.path.exists(repertory+"/_preprop"):
+            os.makedirs(repertory+"/_preprop")
         output = open(fileName, 'w')
         head = "<?xml version='1.0' encoding='UTF-8'?>\n<file>\n"
         foot = "\n</file>"
         toWrite = "\n".join(self.newSent)
         output.write(head); output.write(toWrite); output.write(foot)
-        t = self.listWidget.item(self.itemIndex).text() + " | done!"
-        self.listWidget.item(self.itemIndex).setText(t)
-
+        self.textEdit.setText('')
+        self.listWidget.takeItem(self.itemIndex)
+        self.pushButton_choose.setDisabled(False)
+        self.listWidget.setDisabled(False)
+        self.labelRest.setText("0/0") 
 
 
 if __name__ == "__main__":
