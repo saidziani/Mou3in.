@@ -3,6 +3,8 @@
 import os, nltk, pickle
 from stop_words import get_stop_words
 from string import punctuation
+from bs4 import BeautifulSoup
+
 
 stopWords = get_stop_words('arabic')
 punctuation += '،؟'
@@ -33,12 +35,26 @@ class PreProcess():
 
     def getSents(self, content):
         sents = content.split('.')
-        sents = [sent for sent in sents if sent != ""]
+        sents = [sent for sent in sents if sent.strip() != ""]
         return sents
 
 
+    def getXMLsents(self, content):
+        soup = BeautifulSoup(content,'lxml')
+        packet = soup.find_all("source")
+        toReturn, cpt = [], 0
+        for pack in packet:
+            if pack.attrs['operation'] == '?':
+                toReturn.append((pack, 1))
+                cpt += 1
+            else:
+                toReturn.append((pack, 0))
+        return cpt, toReturn
 
-
+    def getXMLtext(self, item):
+        soup = BeautifulSoup(str(item), 'lxml')
+        source = soup.find("source")
+        return source.text
 
 
 
