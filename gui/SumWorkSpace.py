@@ -244,9 +244,15 @@ class SumWorkSpace(object):
             self.textEdit.setText(sent)
             self.labelRest.setText(str(index+1)+'/'+str(len(self.sents))) 
             if source_object.objectName() == "pushButton_keep":
-                self.newSent.append("<source id='"+str(index+1)+"' operation='S'>﻿\n"+sent+"\n</source>")
+                if self.method == 1:
+                    self.newSent.append("<source id='"+str(index+1)+"' operation='S'>﻿\n"+sent+"\n</source>")
+                else:
+                    self.newSent.append("<source id='"+str(index+1)+"' operation='S'>﻿"+sent+"</source>")     
             elif source_object.objectName() == "pushButton_remove":
-                self.newSent.append("<source id='"+str(index+1)+"' operation='R'>\n﻿"+sent+"\n</source>")
+                if self.method == 1:
+                    self.newSent.append("<source id='"+str(index+1)+"' operation='R'>\n﻿"+sent+"\n</source>")
+                else:
+                    self.newSent.append("<source id='"+str(index+1)+"' operation='R'>"+sent+"</source>")
             elif source_object.objectName() == "pushButton_skip":
                 self.newSent.append(str(self.sents[index][0]))
             index += 1
