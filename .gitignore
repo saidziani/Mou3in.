@@ -1,2 +1,4 @@
 gui/test
 gui/__pycache__
+gui/corpus/
+gui/summaization_corpus/
